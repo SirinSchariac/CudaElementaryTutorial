@@ -71,3 +71,23 @@ prop.minor = 3;
 cudaChooseDevice(&dev, &prop);
 cudaSetDevice(dev);
 ```
+ ---
+ ### 核函数参数
+ `kernel<<<2, 1>>>`表示运行时将创建核函数的两个副本，以并行方式运行，每个并行运行环境称为一个线程块(Block)。
+ 通过`blockIdx`来指定每个线程块的索引，
+ ```
+ __global__ void add(int *a, int *b, int *c)
+{
+    int tid = blockIdx.x;
+    if (tid < N)    //防止非法访存
+    {
+        c[tid] = a[tid] + b[tid];
+    }
+}
+ ```
+ 所有的线程块集合称为一个线程格(Grid)。
+ 更加详细的来说，`kernel<<<Dg, Db, Ns, S>>>`共有四个参数设置
+ - `Dg`指的是Grid的维度，即一个Grid内包含了多少个Block，每个核函数只有一个Grid。Grid是Dim3类型，具体来说就是Dim3(Dg.x, Dg.y, 1)，第一维表示每行有多少个Block，第二维表示每列有多少个Block，第三维默认为1。由于硬件限制，Dg.x和Dg.y数量不能超过65535。
+ - `Db`指的是Block的维度，即每个Block内有多少个线程，同样为Dim3类型，Dim3(Db.x, Db.y, Db.z)，这里的数值限制与`compute capability`有关。
+ - `Ns`表示每个Block除了静态分配的Shared Memory之外还能够动态分配多少的Shared Memory，单位为`byte`，缺省值为0。
+ - `S`为`cudaStream_t`类型参数，表示核函数位于哪个流里面，默认为0。
