@@ -56,3 +56,18 @@ for(int i = 0; i < count; i++)
 }
 ```
 可以获取设备的属性信息。
+
+---
+### cudaChooseDevice&cudaSetDevice
+`cudaChooseDevice`用于寻找符合特定条件的设备，`cudaSetDevice`用于指定操作在特定设备上执行。例如要选择一个`Compute capability`版本为8.3的设备：
+```
+cudaDeviceProp prop;
+int dev;
+
+cudaGetDevice(&dev);
+memset(&prop, 0, sizeof(cudaDeviceProp));
+prop.major = 8;
+prop.minor = 3;
+cudaChooseDevice(&dev, &prop);
+cudaSetDevice(dev);
+```
