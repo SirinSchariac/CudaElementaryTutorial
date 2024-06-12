@@ -24,6 +24,7 @@ int main(void)
             printf("Enabled\n");
         else
             printf("Disabled\n");
+        printf("Max Thread Per Block: %d\n", prop.maxThreadsPerBlock);
         printf("\n");
     }
     
